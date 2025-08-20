@@ -24,9 +24,21 @@ export default function Home() {
           <div className={styles.options}>
             <button
               className={styles.secondary}
-              onClick={() => router.push("/po-generator/with-consignee")}
+              onClick={() => router.push("/po-generator/palmline-plastics")}
             >
-              With Consignee
+              Palmline Plastics Pvt. Ltd
+            </button>
+            <button
+              className={styles.secondary}
+              onClick={() => router.push("/po-generator/lavish-appliances")}
+            >
+              Lavish Appliances
+            </button>
+            <button
+              className={styles.secondary}
+              onClick={() => router.push("/po-generator/jay-n-om-industries")}
+            >
+              Jay n Om Industries
             </button>
             <button
               className={styles.secondary}

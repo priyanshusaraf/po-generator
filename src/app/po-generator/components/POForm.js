@@ -54,8 +54,8 @@ const tableCellStyle = {
   background: '#fff',
 };
 
-export default function POForm({ withConsignee = true, onSubmit }) {
-  const getStorageKey = () => withConsignee ? 'po-form-with-consignee' : 'po-form-without-consignee';
+export default function POForm({ withConsignee = true, supplierConfig = null, onSubmit }) {
+  const getStorageKey = () => supplierConfig ? `po-form-${supplierConfig.key}` : (withConsignee ? 'po-form-with-consignee' : 'po-form-without-consignee');
   
   const getInitialFormData = () => {
     if (typeof window !== 'undefined') {
@@ -68,6 +68,18 @@ export default function POForm({ withConsignee = true, onSubmit }) {
         }
       }
     }
+    
+    // Use supplier config if provided, otherwise use defaults
+    const defaultSupplier = supplierConfig ? {
+      name: supplierConfig.name,
+      address: supplierConfig.address,
+    } : {
+      name: "Jay N Om Industries",
+      address: "Plot No. 35/1, Survey No. 98, J.K. Industrial Green Area, Rajkot - 360024\nGujrat, India",
+    };
+    
+    const defaultPrice = supplierConfig ? supplierConfig.price : "F.O.R RAJKOT";
+    
     return {
       orgName: DEFAULTS.companyName,
       orgAddress: DEFAULTS.companyAddress,
@@ -76,17 +88,14 @@ export default function POForm({ withConsignee = true, onSubmit }) {
       paymentTerm: "",
       delivery: "IMMEDIATE",
       validity: "7 DAYS",
-      price: "F.O.R RAJKOT",
+      price: defaultPrice,
       gst: "18%",
       consignee: {
         name: "R.N.Trading Company",
         address: "1/2 Chanditala Branch Road\nKolkata – 700053",
         gst: "19AEXPA3954Q1ZJ",
       },
-      supplier: {
-        name: "Jay N Om Industries",
-        address: "Plot No. 35/1, Survey No. 98, J.K. Industrial Green Area, Rajkot - 360024\nGujrat, India",
-      },
+      supplier: defaultSupplier,
       items: [
         { itemCode: "", name: "", mark: "", quantity: "", rate: "" },
       ],
@@ -109,7 +118,7 @@ export default function POForm({ withConsignee = true, onSubmit }) {
       };
       localStorage.setItem(getStorageKey(), JSON.stringify(formForStorage));
     }
-  }, [form, withConsignee]);
+  }, [form, withConsignee, supplierConfig]);
 
   const handleChange = (e, path = []) => {
     const { name, value, files } = e.target;
