@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const DEFAULTS = {
   companyName: "S M INDUSTRY",
@@ -10,7 +10,7 @@ const DEFAULTS = {
     address: "11, HAJI BANKU LANE\nKONNAGAR, HOOGHLY – 712235",
     gst: "19ADBF5S589A1ZW",
   },
-  note: `Note:-\n(i) Share picture of some more colours as available with you.\n(ii) Add marking in tag:-\n    (a) MRP\n    (b) QR Code\n    (c) Approx ml\n    (d) Made in India\n    (e) Product Name\n    (f) Logo of Company\n    (g) Manufacturing Date\n    (h) Marketed by R.N. Trading Company\n        1/2, Chanditala Branch Road,\n        Kolkata - 700053\n\nE. & O.E\nfor S. M. Industry`,
+  note: `Note:-\n(i) Share picture of some more colours as available with you.\n(ii) Add marking in tag:-\n    (a) MRP\n    (b) QR Code\n    (c) Approx ml\n    (d) Product Name\n    (e) Logo of Company\n    (f) Manufacturing Date\n    (g) Marketed by R.N. Trading Company\n        1/2, Chanditala Branch Road,\n        Kolkata - 700053\n\nE. & O.E\nfor S. M. Industry`,
 };
 
 const sectionStyle = {
@@ -55,29 +55,61 @@ const tableCellStyle = {
 };
 
 export default function POForm({ withConsignee = true, onSubmit }) {
-  const [form, setForm] = useState({
-    orgName: DEFAULTS.companyName,
-    orgAddress: DEFAULTS.companyAddress,
-    orderNo: "",
-    orderDate: "",
-    paymentTerm: "",
-    delivery: "IMMEDIATE",
-    validity: "7 DAYS",
-    price: "F.O.R RAJKOT",
-    gst: "18%",
-    consignee: {
-      name: "R.N.Trading Company",
-      address: "1/2 Chanditala Branch Road\nKolkata – 700053",
-      gst: "19AEXPA3954Q1ZJ",
-    },
-    supplier: {
-      name: "Jay N Om Industries",
-      address: "Plot No. 35/1, Survey No. 98, J.K. Industrial Green Area, Rajkot - 360024\nGujrat, India",
-    },
-    items: [
-      { itemCode: "", name: "", mark: "", quantity: "", rate: "" },
-    ],
-  });
+  const getStorageKey = () => withConsignee ? 'po-form-with-consignee' : 'po-form-without-consignee';
+  
+  const getInitialFormData = () => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(getStorageKey());
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {
+          console.warn('Failed to parse saved form data:', e);
+        }
+      }
+    }
+    return {
+      orgName: DEFAULTS.companyName,
+      orgAddress: DEFAULTS.companyAddress,
+      orderNo: "",
+      orderDate: "",
+      paymentTerm: "",
+      delivery: "IMMEDIATE",
+      validity: "7 DAYS",
+      price: "F.O.R RAJKOT",
+      gst: "18%",
+      consignee: {
+        name: "R.N.Trading Company",
+        address: "1/2 Chanditala Branch Road\nKolkata – 700053",
+        gst: "19AEXPA3954Q1ZJ",
+      },
+      supplier: {
+        name: "Jay N Om Industries",
+        address: "Plot No. 35/1, Survey No. 98, J.K. Industrial Green Area, Rajkot - 360024\nGujrat, India",
+      },
+      items: [
+        { itemCode: "", name: "", mark: "", quantity: "", rate: "" },
+      ],
+      remarks: "",
+    };
+  };
+
+  const [form, setForm] = useState(getInitialFormData);
+
+  // Save form data to localStorage whenever form changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Create a version of form data without File objects for localStorage
+      const formForStorage = {
+        ...form,
+        items: form.items.map(item => ({
+          ...item,
+          photo: item.photo ? (typeof item.photo === 'string' ? item.photo : null) : null
+        }))
+      };
+      localStorage.setItem(getStorageKey(), JSON.stringify(formForStorage));
+    }
+  }, [form, withConsignee]);
 
   const handleChange = (e, path = []) => {
     const { name, value, files } = e.target;
@@ -213,6 +245,18 @@ export default function POForm({ withConsignee = true, onSubmit }) {
           </tbody>
         </table>
         <button type="button" onClick={addItem} style={{ marginBottom: 16, background: '#bdb38b', color: '#222', border: 'none', borderRadius: 6, padding: '8px 18px', fontWeight: 600, cursor: 'pointer' }}>Add Item</button>
+        <div style={sectionStyle}>Remarks (Optional)</div>
+        <div style={{ marginBottom: 16 }}>
+          <label style={labelStyle}>Additional Remarks:
+            <textarea 
+              name="remarks" 
+              value={form.remarks} 
+              onChange={handleChange} 
+              placeholder="Enter any additional remarks or special instructions..."
+              style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }} 
+            />
+          </label>
+        </div>
         <div style={{ marginTop: 24, textAlign: 'right' }}>
           <button type="submit" className="primary" style={{ background: '#222', color: '#fff', border: 'none', borderRadius: 6, padding: '10px 28px', fontWeight: 600, fontSize: 16, cursor: 'pointer' }}>Continue</button>
         </div>

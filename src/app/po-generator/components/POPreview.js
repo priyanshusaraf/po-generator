@@ -122,6 +122,15 @@ export default function POPreview({ data, withConsignee, onBack }) {
             ))}
           </tbody>
         </table>
+        {data.remarks && data.remarks.trim() && (
+          <div style={{ fontSize: 14, margin: '16px 0', padding: '12px', background: '#f9f9f9', border: '1px solid #ddd', borderRadius: 4 }}>
+            <b>Remarks:</b>
+            <br />
+            <div style={{ whiteSpace: 'pre-line', marginTop: 8 }}>
+              {data.remarks}
+            </div>
+          </div>
+        )}
         <div style={{ fontSize: 13, margin: '16px 0', whiteSpace: 'pre-line' }}>
           <b>Note:-</b>
           <br />
@@ -135,15 +144,13 @@ export default function POPreview({ data, withConsignee, onBack }) {
           <br />
           &nbsp;&nbsp;&nbsp;(c) Approx ml
           <br />
-          &nbsp;&nbsp;&nbsp;(d) Made in India
+          &nbsp;&nbsp;&nbsp;(d) Product Name
           <br />
-          &nbsp;&nbsp;&nbsp;(e) Product Name
+          &nbsp;&nbsp;&nbsp;(e) Logo of Company
           <br />
-          &nbsp;&nbsp;&nbsp;(f) Logo of Company
+          &nbsp;&nbsp;&nbsp;(f) Manufacturing Date
           <br />
-          &nbsp;&nbsp;&nbsp;(g) Manufacturing Date
-          <br />
-          &nbsp;&nbsp;&nbsp;(h) Marketed by R.N. Trading Company
+          &nbsp;&nbsp;&nbsp;(g) Marketed by R.N. Trading Company
           <br />
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1/2, Chanditala Branch Road,
           <br />

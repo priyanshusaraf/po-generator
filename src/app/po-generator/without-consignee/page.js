@@ -8,6 +8,11 @@ export default function WithoutConsigneePO() {
   const [formData, setFormData] = useState(null);
   const router = useRouter();
 
+  const handleBackToForm = () => {
+    setFormData(null);
+    // Form data will be automatically restored from localStorage when POForm loads
+  };
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f8f8f8' }}>
       <main style={{ background: '#fff', padding: '2rem 3rem', borderRadius: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.07)', minWidth: 350 }}>
@@ -17,7 +22,7 @@ export default function WithoutConsigneePO() {
         {!formData ? (
           <POForm withConsignee={false} onSubmit={setFormData} />
         ) : (
-          <POPreview data={formData} withConsignee={false} onBack={() => setFormData(null)} />
+          <POPreview data={formData} withConsignee={false} onBack={handleBackToForm} />
         )}
       </main>
     </div>
